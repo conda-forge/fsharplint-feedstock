@@ -7,30 +7,24 @@ mkdir -p ${PREFIX}/libexec/fsharplint
 ln -sf ${DOTNET_ROOT}/dotnet ${PREFIX}/bin
 
 rm -rf global.json
-rm -rf paket.lock
-rm -rf .paket
 rm -rf .config/dotnet-tools.json
 framework_version="$(dotnet --version | sed -e 's/\..*//g').0"
 
 # Use .net 8.0 instead of 6.0
-sed -i "s?<TargetFramework>.*</TargetFramework>?<TargetFramework>net${framework_version}</TargetFramework>?" \
+sed -i "s?<TargetFrameworks>.*</TargetFrameworks>?<TargetFrameworks>net${framework_version}</TargetFrameworks>?" \
     src/FSharpLint.Console/FSharpLint.Console.fsproj
-sed -i "s?<TargetFramework>.*</TargetFramework>?<TargetFramework>net${framework_version}</TargetFramework>?" \
+sed -i "s?<TargetFrameworks>.*</TargetFrameworks>?<TargetFrameworks>net${framework_version}</TargetFrameworks>?" \
     src/FSharpLint.Core/FSharpLint.Core.fsproj
-sed -i "s?<TargetFramework>.*</TargetFramework>?<TargetFramework>net${framework_version}</TargetFramework>?" \
+sed -i "s?<TargetFrameworks>.*</TargetFrameworks>?<TargetFrameworks>net${framework_version}</TargetFrameworks>?" \
     tests/FSharpLint.Benchmarks/FSharpLint.Benchmarks.fsproj
-sed -i "s?<TargetFramework>.*</TargetFramework>?<TargetFramework>net${framework_version}</TargetFramework>?" \
+sed -i "s?<TargetFrameworks>.*</TargetFrameworks>?<TargetFrameworks>net${framework_version}</TargetFrameworks>?" \
     tests/FSharpLint.Console.Tests/FSharpLint.Console.Tests.fsproj
-sed -i "s?<TargetFramework>.*</TargetFramework>?<TargetFramework>net${framework_version}</TargetFramework>?" \
+sed -i "s?<TargetFrameworks>.*</TargetFrameworks>?<TargetFrameworks>net${framework_version}</TargetFrameworks>?" \
     tests/FSharpLint.Core.Tests/FSharpLint.Core.Tests.fsproj
-sed -i "s?<TargetFramework>.*</TargetFramework>?<TargetFramework>net${framework_version}</TargetFramework>?" \
+sed -i "s?<TargetFrameworks>.*</TargetFrameworks>?<TargetFrameworks>net${framework_version}</TargetFrameworks>?" \
     tests/FSharpLint.FunctionalTest/FSharpLint.FunctionalTest.fsproj
-sed -i "s/net[0-9]*.0/net${framework_version}/g" paket.dependencies
 
-# Apply fix from https://github.com/fsprojects/FSharpLint/pull/716 for .NET 8.0 support
-sed -i 's/getRemainingGlobSeqForMatches pathSegment/getRemainingGlobSeqForMatches (pathSegment:string)/' src/FSharpLint.Core/Application/Configuration.fs
-
-paket install
+# paket install
 dotnet publish --no-self-contained src/FSharpLint.Console/FSharpLint.Console.fsproj --output ${PREFIX}/libexec/fsharplint --framework net${framework_version}
 rm -rf ${PREFIX}/libexec/fsharplint/dotnet-fsharplint
 
